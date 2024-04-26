@@ -1,11 +1,12 @@
 name: Image Recommender Workflow
 
-on: 
-  push: ["main"]
-  pull_request: ["main"]
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
   workflow_dispatch:
-
-
+    
 jobs:
   Main-CI:
     runs-on: ${{ matrix.os }}
