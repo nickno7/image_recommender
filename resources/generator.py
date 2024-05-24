@@ -13,7 +13,8 @@ def load_images_from_harddrive(root_dir):
         for filename in files:
             if filename.lower().endswith((".jpg", ".png", ".jpeg")):
                 size = get_image_size(os.path.join(root, filename))
-                yield root, filename, size
+                image_data = (root, filename, size)
+                yield  image_data
 
 def get_image_count():
     pass
