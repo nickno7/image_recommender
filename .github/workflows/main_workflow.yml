@@ -32,7 +32,7 @@ jobs:
         run: pytest -v -ra
         
       - name: Run ruff linter
-        run: ruff resources/.
+        run: ruff check resources/.
 
 
         
