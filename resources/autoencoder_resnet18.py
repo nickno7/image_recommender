@@ -87,12 +87,12 @@ for image in tqdm(image_files):
         continue
     image_path = os.path.join(inputDir, image)
     try:
-        I = Image.open(image_path)
+        img = Image.open(image_path)
         # calculate vector/embedding
         vec = img2vec.getVec(I)
         if vec is not None:
             allVectors[image] = vec
-        I.close()
+        img.close()
         # save the progress every 1000th image
         if len(allVectors) % 1000 == 0:
             save_progress(allVectors, saveFile)
