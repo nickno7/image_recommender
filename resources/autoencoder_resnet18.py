@@ -7,7 +7,7 @@ from torchvision import models
 import pickle
 
 # directory with all the images
-inputDir = "/Volumes/T7 Shield/Downloads/ILSVRC/Data/CLS-LOC/test"
+inputDir = "/Volumes/T7 Shield 1/Downloads/ILSVRC/Data/CLS-LOC/all_images/test"
 
 
 # we use the resnet18 cnn model to obtain feature vectors
@@ -89,7 +89,7 @@ for image in tqdm(image_files):
     try:
         img = Image.open(image_path)
         # calculate vector/embedding
-        vec = img2vec.getVec(I)
+        vec = img2vec.getVec(img)
         if vec is not None:
             allVectors[image] = vec
         img.close()
