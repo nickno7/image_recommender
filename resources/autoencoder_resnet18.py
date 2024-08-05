@@ -5,10 +5,11 @@ import torch
 from tqdm import tqdm
 from torchvision import models
 import pickle
+import sqlite3
 
-# directory with all the images
-inputDir = "/Volumes/T7 Shield 1/Downloads/ILSVRC/Data/CLS-LOC/all_images/test"
-
+# Database with all image info
+database_path = '/Volumes/T7 Shield 1/Uni/4. Semester/Big Data Engineering/image_database.db'
+table_name = 'image_database'
 
 # we use the resnet18 cnn model to obtain feature vectors
 class Img2VecResnet18():
@@ -34,7 +35,6 @@ class Img2VecResnet18():
     
     def getVec(self, img):
         try:
-            print(f"Original image mode: {img.mode}")
             # to handle png images with transparent background
             if img.mode == 'RGBA':
                 # Create a white background image
@@ -67,6 +67,13 @@ def load_progress(filename):
             return pickle.load(f)
     return {}
 
+# Load image metadata from the database
+def load_image_database(database_path, table_name):
+    with sqlite3.connect(database_path) as conn:
+        curs = conn.cursor()
+        curs.execute(f"SELECT imageid, filepath, filename FROM {table_name}")
+        return curs.fetchall()
+
 # pickle file with the image embeddings
 saveFile = "image_vectors.pkl"
 
@@ -74,18 +81,21 @@ img2vec = Img2VecResnet18()
 # load previous progress, when existing
 allVectors = load_progress(saveFile)
 
+# Load image metadata
+image_metadata = load_image_database(database_path, table_name)
+
 # check whether the pickle file already contains embeddings of images in the input directory
 # to prevent from loading again when they already exist
 processed_images = set(allVectors.keys())
-image_files = [f for f in os.listdir(inputDir) if os.path.isfile(os.path.join(inputDir, f))]
 
 # calculating the image embeddings for every image in the directory
 print("Converting images to feature vectors:")
-for image in tqdm(image_files):
+for image in tqdm(image_metadata):
+    image_id, filepath, filename = image
     # skip already processed images
-    if image in processed_images:
+    if image_id in processed_images:
         continue
-    image_path = os.path.join(inputDir, image)
+    image_path = os.path.join(filepath, filename)
     try:
         img = Image.open(image_path)
         # calculate vector/embedding
