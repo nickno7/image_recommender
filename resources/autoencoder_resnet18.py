@@ -6,10 +6,8 @@ from tqdm import tqdm
 from torchvision import models
 import pickle
 import sqlite3
+import pandas as pd
 
-# Database with all image info
-database_path = '/Volumes/T7 Shield 1/Uni/4. Semester/Big Data Engineering/image_database.db'
-table_name = 'image_database'
 
 # we use the resnet18 cnn model to obtain feature vectors
 class Img2VecResnet18():
@@ -73,43 +71,49 @@ def load_image_database(database_path, table_name):
         curs = conn.cursor()
         curs.execute(f"SELECT imageid, filepath, filename FROM {table_name}")
         return curs.fetchall()
+    
+def main():
+    # pickle file with the image embeddings
+    saveFile = "image_vectors.pkl"
+    # load previous progress, when existing
+    allVectors = load_progress(saveFile)
 
-# pickle file with the image embeddings
-saveFile = "image_vectors.pkl"
+    # check whether the pickle file already contains embeddings of images in the input directory
+    # to prevent from loading again when they already exist
+    processed_images = set(allVectors.keys())
 
-img2vec = Img2VecResnet18()
-# load previous progress, when existing
-allVectors = load_progress(saveFile)
+    # Load image metadata
+    images = pd.DataFrame(pd.read_pickle("image_info.pkl"))
 
-# Load image metadata
-image_metadata = load_image_database(database_path, table_name)
+    img2vec = Img2VecResnet18()
 
-# check whether the pickle file already contains embeddings of images in the input directory
-# to prevent from loading again when they already exist
-processed_images = set(allVectors.keys())
+    # calculating the image embeddings for every image in the database
+    print("Converting images to feature vectors:")
+    for index, row in tqdm(images.iterrows(), total=len(images), desc="Processing images"):
+        image_id = row['image_id']
 
-# calculating the image embeddings for every image in the directory
-print("Converting images to feature vectors:")
-for image in tqdm(image_metadata):
-    image_id, filepath, filename = image
-    # skip already processed images
-    if image_id in processed_images:
-        continue
-    image_path = os.path.join(filepath, filename)
-    try:
-        img = Image.open(image_path)
-        # calculate vector/embedding
-        vec = img2vec.getVec(img)
-        if vec is not None:
-            allVectors[image] = vec
-        img.close()
-        # save the progress every 1000th image
-        if len(allVectors) % 1000 == 0:
-            save_progress(allVectors, saveFile)
-    # prevent the code from breaking
-    except Exception as e:
-        print(f"Error opening/processing image {image}: {e}")
+        # skip already processed images
+        if image_id in processed_images:
+            continue
 
-# save everything in the pickle file 
-save_progress(allVectors, saveFile)
-print(f"Number of vectors generated: {len(allVectors)}")
+        image_path = os.path.join(row['root'], row['file'])
+        try:
+            img = Image.open(image_path)
+            # calculate vector/embedding
+            vec = img2vec.getVec(img)
+            if vec is not None:
+                allVectors[image_id] = vec
+            img.close()
+            # save the progress every 1000th image
+            if len(allVectors) % 50000 == 0:
+                save_progress(allVectors, saveFile)
+        # prevent the code from breaking
+        except Exception as e:
+            print(f"Error opening/processing image {image_id}: {e}")
+
+    # save everything in the pickle file 
+    save_progress(allVectors, saveFile)
+    print(f"Number of vectors generated: {len(allVectors)}")
+
+if __name__ == "__main__":
+    main()
