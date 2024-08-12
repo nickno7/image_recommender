@@ -4,8 +4,6 @@ import pandas as pd
 import os
 from tqdm import tqdm
 import pickle
-import time
-import sqlite3
 
 
 def get_vector(image_path, bins=32):
@@ -39,13 +37,6 @@ def load_progress(filename):
         with open(filename, 'rb') as f:
             return pickle.load(f)
     return {}
-
-# Load image metadata from the database
-def load_image_database(database_path, table_name):
-    with sqlite3.connect(database_path) as conn:
-        curs = conn.cursor()
-        curs.execute(f"SELECT imageid, filepath, filename FROM {table_name}")
-        return curs.fetchall()
 
 def main():
     saveFile = 'color_vectors.pkl'

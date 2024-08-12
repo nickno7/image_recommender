@@ -5,7 +5,6 @@ import torch
 from tqdm import tqdm
 from torchvision import models
 import pickle
-import sqlite3
 import pandas as pd
 
 
