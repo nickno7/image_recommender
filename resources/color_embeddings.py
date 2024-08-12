@@ -2,9 +2,10 @@ import cv2
 import numpy as np
 import pandas as pd
 import os
-from tqdm.notebook import tqdm
+from tqdm import tqdm
 import pickle
 import time
+import sqlite3
 
 
 def get_vector(image_path, bins=32):
@@ -39,44 +40,52 @@ def load_progress(filename):
             return pickle.load(f)
     return {}
 
-images = pd.DataFrame(pd.read_pickle("image_info.pkl"))
-print("read images")
+# Load image metadata from the database
+def load_image_database(database_path, table_name):
+    with sqlite3.connect(database_path) as conn:
+        curs = conn.cursor()
+        curs.execute(f"SELECT imageid, filepath, filename FROM {table_name}")
+        return curs.fetchall()
 
-# store all color vector
-color_vectors = {}
-saveFile = 'color_vectors_1.pkl'
+def main():
+    saveFile = 'color_vectors.pkl'
 
-processed_images = set(color_vectors.keys())
+    # store all color vector
+    color_vectors = load_progress(saveFile)
 
-# iterate through all images
-total_images = len(images)
+    # check whether the pickle file already contains embeddings of images in the input directory
+    # to prevent from loading again when they already exist
+    processed_images = set(color_vectors.keys())
 
-start_time = time.time()
+    # Load image metadata
+    images = pd.DataFrame(pd.read_pickle("image_info.pkl"))
 
-for index, row in tqdm(images.iterrows(), total=total_images, desc="Processing images", unit="image"):
-    image_id = row['image_id']
-    if image_id in processed_images:
-        continue
-    image_path = os.path.join(row['root'], row['file'])
-    try:
-        # calculate color embedding
-        vector = get_vector(image_path)
-        if vector is not None:
-            color_vectors[row['image_id']] = vector
-        # save progress every 5000th image
-        if len(color_vectors) % 5000 == 0:
-            save_progress(color_vectors, saveFile)
-    # prevent the code from breaking
-    except ValueError as e:
-        print(f"Error opening/processing image {image_id}: {e}")
+    print("Processing Images...")
+    # calculating the color embeddings for every image in the database
+    for index, row in tqdm(images.iterrows(), total=len(images), desc="Processing images"):
+        image_id = row['image_id']
+
+        # skip already processed images
+        if image_id in processed_images:
+            continue
+
+        image_path = os.path.join(row['root'], row['file'])
+        try:
+            # calculate color embedding
+            vector = get_vector(image_path)
+            if vector is not None:
+                color_vectors[image_id] = vector
+            # save progress every 5000th image
+            if len(color_vectors) % 50000 == 0:
+                save_progress(color_vectors, saveFile)
+        # prevent the code from breaking
+        except ValueError as e:
+            print(f"Error opening/processing image {image_id}: {e}")
 
 
-# store the color vectors in a pickle file
-save_progress(color_vectors, saveFile)
-print("Saved all color vectors")
+    # save final progress
+    save_progress(color_vectors, saveFile)
+    print(f"Number of vectors generated: {len(color_vectors)}")
 
-# End timer
-end_time = time.time()
-total_time = end_time - start_time
-
-print(f"Total execution time: {total_time:.2f} seconds")
+if __name__ == "__main__":
+    main()
