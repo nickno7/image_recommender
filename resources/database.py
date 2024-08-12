@@ -111,5 +111,3 @@ for index, row in tqdm(images.iterrows(), total=images.shape[0], desc="Inserting
     size = row.get('size', 'Unknown')  # Adjust as necessary
 
     insert_data_into_table(database_path, table_name, imageid, (filepath, filename, size))
-
-    

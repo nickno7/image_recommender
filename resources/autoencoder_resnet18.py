@@ -65,12 +65,6 @@ def load_progress(filename):
             return pickle.load(f)
     return {}
 
-# Load image metadata from the database
-def load_image_database(database_path, table_name):
-    with sqlite3.connect(database_path) as conn:
-        curs = conn.cursor()
-        curs.execute(f"SELECT imageid, filepath, filename FROM {table_name}")
-        return curs.fetchall()
     
 def main():
     # pickle file with the image embeddings
@@ -117,3 +111,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
