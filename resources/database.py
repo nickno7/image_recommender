@@ -2,8 +2,7 @@ import os
 import sqlite3
 from PIL import Image
 import pandas as pd
-from tqdm.notebook import tqdm
-
+from tqdm import tqdm
 
 
 def create_table(database_path, table_name):
@@ -35,7 +34,6 @@ def insert_data_into_table(database_path, table_name, imageid, image_data):
             insert_statement = f"INSERT INTO {table_name} (imageid, filepath, filename, size) VALUES (?, ?, ?, ?)"
             curs.execute(insert_statement, (imageid, *image_data))
             conn.commit()
-            print(f"Data for image ID {imageid} inserted successfully.")
     except sqlite3.Error as e:
         print(f"An error occurred while inserting data: {e}")
 
@@ -97,14 +95,16 @@ images = pd.DataFrame(pd.read_pickle(pickle_file))
 
 
 # Define database path and table name
-database_path = '/Volumes/T7 Shield 1/Uni/4. Semester/Big Data Engineering/image_database.db'
+database_path = '/Volumes/T7 Shield/Uni/4. Semester/Big Data Engineering/image_database.db'
 table_name = 'image_database'
+
+# drop_table(database_path, table_name)
 
 # Create the table if it doesn't exist
 create_table(database_path, table_name)
 
 # Insert DataFrame rows into the database
-for index, row in tqdm(images.iterrows(), total=images.shape[0], desc="Inserting data into database"):
+for index, row in tqdm(images.iterrows(), total=len(images), desc="Inserting data into database"):
     imageid = row['image_id']
     filepath = row['root']
     filename = row['file']
