@@ -39,8 +39,8 @@ def process_input_image(image_path, mode, img2vec):
     if mode == "color":
         return get_vector(image_path)
     elif mode == "content":
-        I = Image.open(image_path)
-        return img2vec.getVec(I)
+        img = Image.open(image_path)
+        return img2vec.getVec(img)
     else:
         raise ValueError("Invalid mode. Choose either 'color' or 'content'.")
 
