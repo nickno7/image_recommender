@@ -1,9 +1,5 @@
 import cv2
 import numpy as np
-import pandas as pd
-import os
-from tqdm import tqdm
-import pickle
 from color_embeddings import get_vector
 from sklearn.metrics.pairwise import cosine_similarity
 import matplotlib.pyplot as plt
@@ -48,7 +44,7 @@ def process_input_image(image_path, mode, img2vec):
     else:
         raise ValueError("Invalid mode. Choose either 'color' or 'content'.")
 
-def get_similar_images(image_path, mode, embeddings_file, number_pictures):
+def get_similar_images(image_path, database_path, table_name, mode, embeddings_file, number_pictures):
     img2vec = Img2VecResnet18()    
     
     query_vector = process_input_image(image_path, mode, img2vec)
@@ -66,4 +62,4 @@ def get_similar_images(image_path, mode, embeddings_file, number_pictures):
 
     for image_path, title in zip(closest_image_paths, titles):
         show_image(image_path, title)
-        
+
