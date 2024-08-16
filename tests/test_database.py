@@ -37,6 +37,9 @@ def test_get_image_path():
     
     # Call the function
     result = get_image_path(db_path, table_name, image_id)
+
+    # Normalize paths for comparison (Windows uses backslashes)
+    result = result.replace('\\', '/')
     
     # Assertions
     assert result == expected_path, f"Expected {expected_path} but got {result}"
