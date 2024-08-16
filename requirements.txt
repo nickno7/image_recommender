@@ -6,3 +6,6 @@ pandas
 matplotlib
 tqdm
 numpy
+joblib
+scikit-learn
+
