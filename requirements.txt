@@ -3,3 +3,8 @@ ruff>=0.0.71
 pillow
 opencv-python
 pandas
+matplotlib
+tqdm
+numpy
+os
+sqlite3
