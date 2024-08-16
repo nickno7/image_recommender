@@ -63,6 +63,8 @@ def test_create_table():
     
     assert result is not None, "Table creation failed"
     assert result[0] == table_name, "Table name does not match"
+
+    conn.close()
     
     # Clean up
     os.remove(db_path)
@@ -88,5 +90,7 @@ def test_insert_data_into_table():
     assert result is not None, "Data insertion failed"
     assert result[0] == imageid, "Image ID does not match"
     assert result[1:] == image_data, "Image data does not match"
+
+    conn.close()
 
     os.remove(db_path)
