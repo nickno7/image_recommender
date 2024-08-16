@@ -1,12 +1,12 @@
 import cv2
 import numpy as np
-from color_embeddings import get_vector
+from resources.color_embeddings import get_vector
 from sklearn.metrics.pairwise import cosine_similarity
 import matplotlib.pyplot as plt
-from database import get_image_path
-from autoencoder_resnet18 import Img2VecResnet18
+from resources.database import get_image_path
+from resources.autoencoder_resnet18 import Img2VecResnet18
 from PIL import Image
-from dimensionality_reduction import preprocess_image
+from resources.dimensionality_reduction import preprocess_image
 import joblib
 
 # function to display an image
