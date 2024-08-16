@@ -46,7 +46,7 @@ def test_get_image_path():
 
 
 def test_create_table():
-    db_path = create_dummy_database()
+    db_path = create_temp_file()
     table_name = 'test_table'
     
     # Create the table
@@ -65,7 +65,7 @@ def test_create_table():
     os.remove(db_path)
 
 def test_insert_data_into_table():
-    db_path = create_dummy_database()
+    db_path = create_temp_file()
     table_name = 'test_table'
     imageid = 1
     image_data = ("/Users/nick/Downloads", "beach.jpeg", "9299")
