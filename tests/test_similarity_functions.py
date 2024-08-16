@@ -40,7 +40,7 @@ def test_process_input_image():
     ipca = None  # Not used in color mode
 
     # Mock the get_vector function
-    with patch('similarity_functions.get_vector', return_value=np.array([1, 2, 3])):
+    with patch('resources.similarity_functions.get_vector', return_value=np.array([1, 2, 3])):
         result_color = process_input_image(image_path, mode_color, img2vec, ipca)
         expected_result_color = np.array([1, 2, 3])
         np.testing.assert_array_equal(result_color, expected_result_color)
@@ -51,7 +51,7 @@ def test_process_input_image():
     img2vec.getVec.return_value = np.array([0.1, 0.2, 0.3, 0.4])  # Dummy embedding data
 
     # Mock the Image.open function to return a simple image
-    with patch('similarity_functions.Image.open', return_value=Image.new('RGB', (10, 10))):
+    with patch('resources.similarity_functions.Image.open', return_value=Image.new('RGB', (10, 10))):
         result_content = process_input_image(image_path, mode_content, img2vec, ipca)
         expected_result_content = np.array([0.1, 0.2, 0.3, 0.4])
         np.testing.assert_array_equal(result_content, expected_result_content)
@@ -79,16 +79,16 @@ def test_get_similar_images():
 
     mock_get_image_path = lambda db, tbl, id: f"image_{id}.jpg"
 
-    with patch('similarity_functions.Img2VecResnet18', return_value=mock_img2vec), \
-         patch('similarity_functions.joblib.load', return_value=mock_ipca), \
-         patch('similarity_functions.get_image_path', side_effect=mock_get_image_path), \
-         patch('similarity_functions.show_image'):
+    with patch('resources.similarity_functions.Img2VecResnet18', return_value=mock_img2vec), \
+         patch('resources.similarity_functions.joblib.load', return_value=mock_ipca), \
+         patch('resources.similarity_functions.get_image_path', side_effect=mock_get_image_path), \
+         patch('resources.similarity_functions.show_image'):
 
         # Test for 'color' mode
-        with patch('similarity_functions.get_vector', return_value=np.array([0.1, 0.2, 0.3])):
+        with patch('resources.similarity_functions.get_vector', return_value=np.array([0.1, 0.2, 0.3])):
             get_similar_images(image_path, database_path, table_name, 'color', embeddings_file, number_pictures, several_inputs)
         
         # Test for 'content' mode
-        with patch('similarity_functions.Image.open', return_value=Mock()), \
+        with patch('resources.similarity_functions.Image.open', return_value=Mock()), \
              patch.object(mock_img2vec, 'getVec', return_value=np.array([0.1, 0.2, 0.3, 0.4])):
             get_similar_images(image_path, database_path, table_name, 'content', embeddings_file, number_pictures, several_inputs)
