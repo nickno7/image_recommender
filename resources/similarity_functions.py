@@ -8,6 +8,7 @@ from resources.autoencoder_resnet18 import Img2VecResnet18
 from PIL import Image
 from resources.dimensionality_reduction import preprocess_image
 import joblib
+from resources.hog_embeddings import extract_hog_features
 
 # function to display an image
 def show_image(image_path, title):
@@ -46,6 +47,10 @@ def process_input_image(image_path, mode, img2vec, ipca):
         vector = preprocess_image(image_path)
         reduced_vector = ipca.transform([vector])
         return reduced_vector.flatten()
+    elif mode == "hog":
+        vector = extract_hog_features(image_path)
+        return vector
+
     
     else:
         raise ValueError("Invalid mode. Choose either 'color', 'content' or 'pca'.")
