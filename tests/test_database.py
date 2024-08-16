@@ -43,9 +43,6 @@ def test_get_image_path():
     
     # Assertions
     assert result == expected_path, f"Expected {expected_path} but got {result}"
-    
-    # Clean up
-    os.remove(db_path)
 
 
 def test_create_table():
@@ -65,9 +62,6 @@ def test_create_table():
     assert result[0] == table_name, "Table name does not match"
 
     conn.close()
-    
-    # Clean up
-    os.remove(db_path)
 
 def test_insert_data_into_table():
     db_path = create_temp_file()
@@ -92,5 +86,3 @@ def test_insert_data_into_table():
     assert result[1:] == image_data, "Image data does not match"
 
     conn.close()
-
-    os.remove(db_path)
