@@ -1,2 +1,11 @@
 pytest>=6.0
 ruff>=0.0.71
+pillow
+opencv-python
+pandas
+matplotlib
+tqdm
+numpy
+joblib
+scikit-learn
+torchvision

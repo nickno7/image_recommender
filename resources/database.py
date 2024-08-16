@@ -119,4 +119,4 @@ database_path = '/Volumes/T7 Shield 1/Uni/4. Semester/Big Data Engineering/image
 table_name = 'image_database_T7_1'
 
 # Create the table if it doesn't exist
-create_table(database_path, table_name)
+# create_table(database_path, table_name)

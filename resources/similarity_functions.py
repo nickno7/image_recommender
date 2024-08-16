@@ -6,7 +6,8 @@ import matplotlib.pyplot as plt
 from resources.database import get_image_path
 from resources.autoencoder_resnet18 import Img2VecResnet18
 from PIL import Image
-
+import joblib
+# from resources.hog_embeddings import extract_hog_features
 
 # function to display an image
 def show_image(image_path, title):
@@ -34,27 +35,51 @@ def calculate_scores(query_vector, embeddings, image_ids, number_pictures):
     
     return closest_vectors, closest_indices
 
-def process_input_image(image_path, mode, img2vec):
+def process_input_image(image_path, mode, img2vec, ipca):
     """Process the input image to generate an embedding vector based on the selected mode."""
     if mode == "color":
         return get_vector(image_path)
     elif mode == "content":
         img = Image.open(image_path)
         return img2vec.getVec(img)
-    else:
-        raise ValueError("Invalid mode. Choose either 'color' or 'content'.")
+    # elif mode == "pca":
+    #     vector = preprocess_image(image_path)
+    #     reduced_vector = ipca.transform([vector])
+    #     return reduced_vector.flatten()
+    # elif mode == "hog":
+    #     vector = extract_hog_features(image_path)
+    #     return vector
 
-def get_similar_images(image_path, database_path, table_name, mode, embeddings_file, number_pictures):
-    img2vec = Img2VecResnet18()    
-    
-    query_vector = process_input_image(image_path, mode, img2vec)
+    else:
+        raise ValueError("Invalid mode. Choose either 'color', 'content' or 'pca'.")
+
+def get_similar_images(image_path, database_path, table_name, mode, embeddings_file, number_pictures, several_inputs):
+    img2vec = Img2VecResnet18()   
+    # Load the IncrementalPCA model
+    ipca = joblib.load('pca_model.pkl')    
+
+    # get similar images for more than one input image
+    if several_inputs:
+        query_vectors = []
+        for image in image_path:
+            query_vector = process_input_image(image, mode, img2vec, ipca)
+            query_vectors.append(query_vector)
+        # Calculate the average embedding across all input images
+        query_vector = np.mean(query_vectors, axis=0)
+    else:
+        query_vector = process_input_image(image_path, mode, img2vec, ipca)
 
     image_ids, embeddings = load_embeddings(embeddings_file)
-    
-    closest_vectors, closest_indices = calculate_scores(query_vector, embeddings, image_ids, number_pictures)
 
-    # display input image
-    show_image(image_path, "Input Image")
+    closest_vectors, closest_indices = calculate_scores(query_vector, embeddings, image_ids, number_pictures)           
+
+    # Display input image(s)
+    if several_inputs:
+        for image in image_path:
+            show_image(image, "Input Image")
+    else:
+        show_image(image_path, "Input Image")
+
 
     # Prepare paths and titles for similar images
     closest_image_paths = [get_image_path(database_path, table_name, image_ids[i]) for i in closest_indices]
