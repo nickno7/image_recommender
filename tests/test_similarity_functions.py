@@ -63,19 +63,19 @@ def test_get_similar_images():
     database_path = 'dummy_database.db'
     table_name = 'dummy_table'
     embeddings_file = {
-        1: np.array([0.1, 0.2, 0.3]),
-        2: np.array([0.4, 0.5, 0.6]),
-        3: np.array([0.7, 0.8, 0.9])
+        1: np.array([0.1, 0.2, 0.3, 0.4]), 
+        2: np.array([0.5, 0.6, 0.7, 0.8]),
+        3: np.array([0.9, 1.0, 1.1, 1.2])
     }
     number_pictures = 2
     several_inputs = False
-    
+
     # Mock Img2VecResnet18 and joblib.load
     mock_img2vec = Mock()
     mock_img2vec.getVec.return_value = np.array([0.1, 0.2, 0.3, 0.4])
 
     mock_ipca = Mock()
-    mock_ipca.transform.return_value = np.array([[0.1, 0.2, 0.3]])
+    mock_ipca.transform.return_value = np.array([[0.1, 0.2, 0.3, 0.4]])
 
     mock_get_image_path = lambda db, tbl, id: f"image_{id}.jpg"
 
@@ -85,9 +85,9 @@ def test_get_similar_images():
          patch('resources.similarity_functions.show_image'):
 
         # Test for 'color' mode
-        with patch('resources.similarity_functions.get_vector', return_value=np.array([0.1, 0.2, 0.3])):
+        with patch('resources.similarity_functions.get_vector', return_value=np.array([0.1, 0.2, 0.3, 0.4])):
             get_similar_images(image_path, database_path, table_name, 'color', embeddings_file, number_pictures, several_inputs)
-        
+
         # Test for 'content' mode
         with patch('resources.similarity_functions.Image.open', return_value=Mock()), \
              patch.object(mock_img2vec, 'getVec', return_value=np.array([0.1, 0.2, 0.3, 0.4])):
