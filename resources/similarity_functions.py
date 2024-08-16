@@ -1,10 +1,10 @@
 import cv2
 import numpy as np
-from resources.color_embeddings import get_vector
+from color_embeddings import get_vector
 from sklearn.metrics.pairwise import cosine_similarity
 import matplotlib.pyplot as plt
-from resources.database import get_image_path
-from resources.ressnet_embeddings import Img2VecResnet18
+from database import get_image_path
+from resnet_embeddings import Img2VecResnet18
 from PIL import Image
 import joblib
 # from resources.hog_embeddings import extract_hog_features
@@ -35,7 +35,7 @@ def calculate_scores(query_vector, embeddings, image_ids, number_pictures):
     
     return closest_vectors, closest_indices
 
-def process_input_image(image_path, mode, img2vec, ipca):
+def process_input_image(image_path, mode, img2vec):
     """Process the input image to generate an embedding vector based on the selected mode."""
     if mode == "color":
         return get_vector(image_path)
@@ -56,18 +56,18 @@ def process_input_image(image_path, mode, img2vec, ipca):
 def get_similar_images(image_path, database_path, table_name, mode, embeddings_file, number_pictures, several_inputs):
     img2vec = Img2VecResnet18()   
     # Load the IncrementalPCA model
-    ipca = joblib.load('pca_model.pkl')    
+ 
 
     # get similar images for more than one input image
     if several_inputs:
         query_vectors = []
         for image in image_path:
-            query_vector = process_input_image(image, mode, img2vec, ipca)
+            query_vector = process_input_image(image, mode, img2vec)
             query_vectors.append(query_vector)
         # Calculate the average embedding across all input images
         query_vector = np.mean(query_vectors, axis=0)
     else:
-        query_vector = process_input_image(image_path, mode, img2vec, ipca)
+        query_vector = process_input_image(image_path, mode, img2vec)
 
     image_ids, embeddings = load_embeddings(embeddings_file)
 
