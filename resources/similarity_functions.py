@@ -4,7 +4,7 @@ from resources.color_embeddings import get_vector
 from sklearn.metrics.pairwise import cosine_similarity
 import matplotlib.pyplot as plt
 from resources.database import get_image_path
-from resources.autoencoder_resnet18 import Img2VecResnet18
+from resources.ressnet_embeddings import Img2VecResnet18
 from PIL import Image
 import joblib
 # from resources.hog_embeddings import extract_hog_features
