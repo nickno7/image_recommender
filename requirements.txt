@@ -6,4 +6,3 @@ pandas
 matplotlib
 tqdm
 numpy
-sqlite3
