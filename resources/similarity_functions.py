@@ -1,13 +1,13 @@
 import cv2
 import numpy as np
-from .color_embeddings import get_vector
+from resources.color_embeddings import get_vector
 from sklearn.metrics.pairwise import cosine_similarity
 import matplotlib.pyplot as plt
-from .database import get_image_path
-from .resnet_embeddings import Img2VecResnet18
+from resources.database import get_image_path
+from resources.resnet_embeddings import Img2VecResnet18
 from PIL import Image
 import joblib
-from .hog_embeddings import extract_hog_features
+from resources.hog_embeddings import extract_hog_features
 
 # function to display an image
 def show_image(image_path, title):

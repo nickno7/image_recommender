@@ -39,7 +39,7 @@ def test_process_input_image():
     img2vec = None  # Not used in color mode
 
     # Mock the get_vector function
-    with patch('resources.get_vector', return_value=np.array([1, 2, 3])):
+    with patch('resources.similarity_functions.get_vector', return_value=np.array([1, 2, 3])):
         result_color = process_input_image(image_path, mode_color, img2vec)
         expected_result_color = np.array([1, 2, 3])
         np.testing.assert_array_equal(result_color, expected_result_color)
@@ -88,10 +88,10 @@ def test_get_similar_images():
          patch('resources.similarity_functions.show_image'):
 
         # Test for 'color' mode
-        with patch('similarity_functions.get_vector', return_value=np.array([0.1, 0.2, 0.3, 0.4])):
+        with patch('resources.similarity_functions.get_vector', return_value=np.array([0.1, 0.2, 0.3, 0.4])):
             get_similar_images(image_path, database_path, table_name, 'color', embeddings_file, number_pictures, several_inputs)
 
         # Test for 'content' mode
-        with patch('similarity_functions.Image.open', return_value=Mock()), \
+        with patch('resources.similarity_functions.Image.open', return_value=Mock()), \
              patch.object(mock_img2vec, 'getVec', return_value=np.array([0.1, 0.2, 0.3, 0.4])):
             get_similar_images(image_path, database_path, table_name, 'content', embeddings_file, number_pictures, several_inputs)
