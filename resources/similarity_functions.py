@@ -7,7 +7,7 @@ from database import get_image_path
 from resnet_embeddings import Img2VecResnet18
 from PIL import Image
 import joblib
-# from resources.hog_embeddings import extract_hog_features
+from hog_embeddings import extract_hog_features
 
 # function to display an image
 def show_image(image_path, title):
@@ -39,25 +39,21 @@ def process_input_image(image_path, mode, img2vec):
     """Process the input image to generate an embedding vector based on the selected mode."""
     if mode == "color":
         return get_vector(image_path)
-    elif mode == "content":
+    elif mode == "content": 
         img = Image.open(image_path)
         return img2vec.getVec(img)
-    # elif mode == "pca":
-    #     vector = preprocess_image(image_path)
-    #     reduced_vector = ipca.transform([vector])
-    #     return reduced_vector.flatten()
-    # elif mode == "hog":
-    #     vector = extract_hog_features(image_path)
-    #     return vector
+    elif mode == "hog":
+        vector = extract_hog_features(image_path)
+        return vector
 
     else:
-        raise ValueError("Invalid mode. Choose either 'color', 'content' or 'pca'.")
+        raise ValueError("Invalid mode. Choose either 'color', 'content' or 'hog'.")
 
 def get_similar_images(image_path, database_path, table_name, mode, embeddings_file, number_pictures, several_inputs):
-    img2vec = Img2VecResnet18()   
-    # Load the IncrementalPCA model
- 
-
+    if mode == "content":
+        img2vec = Img2VecResnet18() 
+    else:
+        img2vec = None
     # get similar images for more than one input image
     if several_inputs:
         query_vectors = []
