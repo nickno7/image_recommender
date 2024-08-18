@@ -84,7 +84,7 @@ def test_get_similar_images():
     mock_get_image_path = lambda db, tbl, id: f"image_{id}.jpg"
 
     with patch('resources.similarity_functions.Img2VecResnet18', return_value=mock_img2vec), \
-         patch('resources.similarity_functions.database.get_image_path', side_effect=mock_get_image_path), \
+         patch('resources.similarity_functions.get_image_path', side_effect=mock_get_image_path), \
          patch('resources.similarity_functions.show_image'):
 
         # Test for 'color' mode

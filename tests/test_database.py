@@ -1,6 +1,6 @@
 import os
 import sqlite3
-from .database import get_image_path, create_table, insert_data_into_table
+from resources.database import get_image_path, create_table, insert_data_into_table
 import tempfile
 
 def create_temp_file():
