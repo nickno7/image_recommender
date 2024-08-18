@@ -39,7 +39,7 @@ def test_process_input_image():
     img2vec = None  # Not used in color mode
 
     # Mock the get_vector function
-    with patch('similarity_functions.color_embeddings.get_vector', return_value=np.array([1, 2, 3])):
+    with patch('.color_embeddings.get_vector', return_value=np.array([1, 2, 3])):
         result_color = process_input_image(image_path, mode_color, img2vec)
         expected_result_color = np.array([1, 2, 3])
         np.testing.assert_array_equal(result_color, expected_result_color)
@@ -83,7 +83,7 @@ def test_get_similar_images():
 
     mock_get_image_path = lambda db, tbl, id: f"image_{id}.jpg"
 
-    with patch('similarity_functions.resnet_embeddings.Img2VecResnet18', return_value=mock_img2vec), \
+    with patch('.resnet_embeddings.Img2VecResnet18', return_value=mock_img2vec), \
          patch('similarity_functions.database.get_image_path', side_effect=mock_get_image_path), \
          patch('similarity_functions.show_image'):
 
