@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from PIL import Image
 from unittest.mock import patch, Mock
+from .resnet_embeddings import 
 
 
 def test_load_embeddings():
@@ -39,7 +40,7 @@ def test_process_input_image():
     img2vec = None  # Not used in color mode
 
     # Mock the get_vector function
-    with patch('similarity_functions.get_vector', return_value=np.array([1, 2, 3])):
+    with patch('similarity_functions.color_embeddings.get_vector', return_value=np.array([1, 2, 3])):
         result_color = process_input_image(image_path, mode_color, img2vec)
         expected_result_color = np.array([1, 2, 3])
         np.testing.assert_array_equal(result_color, expected_result_color)
@@ -58,7 +59,7 @@ def test_process_input_image():
     # Test for 'hog' mode
     mode_hog = 'hog'
     # Mock the extract_hog_features function
-    with patch('similarity_functions.extract_hog_features', return_value=np.array([0.5, 0.6, 0.7])):
+    with patch('similarity_functions.hog_embeddings.extract_hog_features', return_value=np.array([0.5, 0.6, 0.7])):
         result_hog = process_input_image(image_path, mode_hog, img2vec)
         expected_result_hog = np.array([0.5, 0.6, 0.7])
         np.testing.assert_array_equal(result_hog, expected_result_hog)
@@ -83,8 +84,8 @@ def test_get_similar_images():
 
     mock_get_image_path = lambda db, tbl, id: f"image_{id}.jpg"
 
-    with patch('similarity_functions.Img2VecResnet18', return_value=mock_img2vec), \
-         patch('similarity_functions.get_image_path', side_effect=mock_get_image_path), \
+    with patch('similarity_functions.resnet_embeddings.Img2VecResnet18', return_value=mock_img2vec), \
+         patch('similarity_functions.database.get_image_path', side_effect=mock_get_image_path), \
          patch('similarity_functions.show_image'):
 
         # Test for 'color' mode
