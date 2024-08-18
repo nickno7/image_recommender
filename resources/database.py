@@ -38,46 +38,11 @@ def insert_data_into_table(database_path, table_name, imageid, image_data):
         print(f"An error occurred while inserting data: {e}")
 
 
-def get_picture_and_load_it(database_path, table_name):
-    """Fetch and display the first image from the table."""
-    with sqlite3.connect(database_path) as conn:
-        curs = conn.cursor()
-        curs.execute(f"SELECT filepath, filename FROM {table_name}")
-        firstpic = curs.fetchall()[0]
-        path = os.path.join(firstpic[0], firstpic[1])
-        image = Image.open(path)
-        image.show()
-
-
 def drop_table(database_path, table_name):
     """Drop the table from the database."""
     with sqlite3.connect(database_path) as conn:
         curs = conn.cursor()
         curs.execute(f"DROP TABLE IF EXISTS {table_name}")
-        conn.commit()
-
-
-def describe_table(database_path, table_name):
-    """Describe the structure of the table."""
-    with sqlite3.connect(database_path) as conn:
-        curs = conn.cursor()
-        curs.execute(f"PRAGMA table_info({table_name})")
-        return curs.fetchall()
-
-
-def select_all_images(database_path, table_name):
-    """Select all images from the table."""
-    with sqlite3.connect(database_path) as conn:
-        curs = conn.cursor()
-        curs.execute(f"SELECT * FROM {table_name}")
-        return curs.fetchall()
-
-
-def delete_all_images(database_path, table_name):
-    """Delete all images from the table."""
-    with sqlite3.connect(database_path) as conn:
-        curs = conn.cursor()
-        curs.execute(f"DELETE FROM {table_name}")
         conn.commit()
 
 
@@ -120,3 +85,6 @@ table_name = 'image_database_T7_1'
 
 # Create the table if it doesn't exist
 # create_table(database_path, table_name)
+
+# insert data from pickle file into database
+# insert_data_from_pickle(pickle_file, database_path, table_name)
