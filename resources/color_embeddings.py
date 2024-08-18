@@ -10,10 +10,10 @@ def get_vector(image_path, bins=32):
     # check whether the file exists
     if not os.path.isfile(image_path):
         raise ValueError(f"Die Datei {image_path} existiert nicht.")
-    
+
     # load image
     image = cv2.imread(image_path)
-    
+
     # checker whether the image has been loaded successfully
     if image is None:
         raise ValueError(f"Das Bild {image_path} konnte nicht geladen werden.")
@@ -22,24 +22,27 @@ def get_vector(image_path, bins=32):
     red = cv2.calcHist([image], [2], None, [bins], [0, 256])
     green = cv2.calcHist([image], [1], None, [bins], [0, 256])
     blue = cv2.calcHist([image], [0], None, [bins], [0, 256])
-    
+
     vector = np.concatenate([red, green, blue], axis=0).reshape(-1)
     return vector
 
+
 # function to save the embeddings in a pickle file
 def save_progress(vectors, filename):
-    with open(filename, 'wb') as f:
+    with open(filename, "wb") as f:
         pickle.dump(vectors, f)
+
 
 # function to load existing pickle files and continue with them (in case the process crashed)
 def load_progress(filename):
     if os.path.exists(filename):
-        with open(filename, 'rb') as f:
+        with open(filename, "rb") as f:
             return pickle.load(f)
     return {}
 
+
 def main():
-    saveFile = 'color_vectors.pkl'
+    saveFile = "color_vectors.pkl"
 
     # store all color vector
     color_vectors = load_progress(saveFile)
@@ -53,14 +56,16 @@ def main():
 
     print("Processing Images...")
     # calculating the color embeddings for every image in the database
-    for index, row in tqdm(images.iterrows(), total=len(images), desc="Processing images"):
-        image_id = row['image_id']
+    for index, row in tqdm(
+        images.iterrows(), total=len(images), desc="Processing images"
+    ):
+        image_id = row["image_id"]
 
         # skip already processed images
         if image_id in processed_images:
             continue
 
-        image_path = os.path.join(row['root'], row['file'])
+        image_path = os.path.join(row["root"], row["file"])
         try:
             # calculate color embedding
             vector = get_vector(image_path)
@@ -73,10 +78,10 @@ def main():
         except ValueError as e:
             print(f"Error opening/processing image {image_id}: {e}")
 
-
     # save final progress
     save_progress(color_vectors, saveFile)
     print(f"Number of vectors generated: {len(color_vectors)}")
+
 
 if __name__ == "__main__":
     main()
