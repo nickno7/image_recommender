@@ -3,7 +3,6 @@ import numpy as np
 import pandas as pd
 from PIL import Image
 from unittest.mock import patch, Mock
-from .resnet_embeddings import 
 
 
 def test_load_embeddings():
