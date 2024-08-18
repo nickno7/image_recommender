@@ -81,13 +81,9 @@ def test_get_similar_images():
     mock_img2vec = Mock()
     mock_img2vec.getVec.return_value = np.array([0.1, 0.2, 0.3, 0.4])
 
-    mock_ipca = Mock()
-    mock_ipca.transform.return_value = np.array([[0.1, 0.2, 0.3, 0.4]])
-
     mock_get_image_path = lambda db, tbl, id: f"image_{id}.jpg"
 
     with patch('similarity_functions.Img2VecResnet18', return_value=mock_img2vec), \
-         patch('similarity_functions.joblib.load', return_value=mock_ipca), \
          patch('similarity_functions.get_image_path', side_effect=mock_get_image_path), \
          patch('similarity_functions.show_image'):
 
