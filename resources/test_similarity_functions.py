@@ -1,4 +1,4 @@
-from similarity_functions import load_embeddings, calculate_scores, process_input_image, get_similar_images
+from .similarity_functions import load_embeddings, calculate_scores, process_input_image, get_similar_images
 import numpy as np
 import pandas as pd
 from PIL import Image
