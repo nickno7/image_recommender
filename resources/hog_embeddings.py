@@ -1,4 +1,4 @@
-from skimage.io import imread, imshow
+from skimage.io import imread
 from skimage.transform import resize 
 from skimage.feature import hog
 from skimage.color import rgb2gray

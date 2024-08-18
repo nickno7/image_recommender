@@ -1,6 +1,5 @@
 import os
 import sqlite3
-from PIL import Image
 import pandas as pd
 from tqdm import tqdm
 
