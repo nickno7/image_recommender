@@ -9,4 +9,4 @@ numpy
 joblib
 scikit-learn
 torchvision
-skimage
+scikit-image
