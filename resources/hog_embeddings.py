@@ -1,5 +1,5 @@
 from skimage.io import imread
-from skimage.transform import resize 
+from skimage.transform import resize
 from skimage.feature import hog
 from skimage.color import rgb2gray
 import pandas as pd
@@ -22,25 +22,33 @@ def extract_hog_features(image_path):
 
         resized_img = resize(img, (128, 64))
         gray_img = rgb2gray(resized_img)
-        features = hog(gray_img, orientations=6, pixels_per_cell=(16, 16),
-                          cells_per_block=(2, 2), visualize=False)
-        
+        features = hog(
+            gray_img,
+            orientations=6,
+            pixels_per_cell=(16, 16),
+            cells_per_block=(2, 2),
+            visualize=False,
+        )
+
         return features
     except Exception as e:
         print(f"Error processing {image_path}: {e}")
         return None
 
-# function to save the embeddings in a pickle file 
+
+# function to save the embeddings in a pickle file
 def save_progress(vectors, filename):
-    with open(filename, 'wb') as f:
+    with open(filename, "wb") as f:
         pickle.dump(vectors, f)
+
 
 # function to load existing pickle files and continue with them (in case the process crashed)
 def load_progress(filename):
     if os.path.exists(filename):
-        with open(filename, 'rb') as f:
+        with open(filename, "rb") as f:
             return pickle.load(f)
     return {}
+
 
 def main():
 
@@ -58,17 +66,19 @@ def main():
 
     # calculating the image embeddings for every image in the database
     print("Converting images to feature vectors:")
-    for index, row in tqdm(images.iterrows(), total=len(images), desc="Processing images"):
-        image_id = row['image_id']
+    for index, row in tqdm(
+        images.iterrows(), total=len(images), desc="Processing images"
+    ):
+        image_id = row["image_id"]
 
         # skip already processed images
         if image_id in processed_images:
             continue
 
-        image_path = os.path.join(row['root'], row['file'])
+        image_path = os.path.join(row["root"], row["file"])
         try:
             features = extract_hog_features(image_path)
-            
+
             if features is not None:
                 allVectors[image_id] = features
 
@@ -79,9 +89,10 @@ def main():
         except Exception as e:
             print(f"Error opening/processing image {image_id}: {e}")
 
-    # save everything in the pickle file 
+    # save everything in the pickle file
     save_progress(allVectors, saveFile)
     print(f"Number of vectors generated: {len(allVectors)}")
+
 
 if __name__ == "__main__":
     main()
