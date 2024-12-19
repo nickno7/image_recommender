@@ -73,3 +73,11 @@ You can adapt and reuse this repository for your own purposes by following these
       
 
     This will generate the top 5 similar images based on the selected mode(based on the cell you run). The modes are *content*, *color* and *hog*.
+
+
+## Analysis
+
+![tsne_image_embeddings](https://github.com/user-attachments/assets/be729a4b-51b8-451f-84d2-5ef8ca8fd990)
+
+This visualization of the ResNet18 embeddings shows the distribution of the images in a two-dimensional space. 
+The large number of different point clouds representing the image categories is striking and indicates a great diversity in the data set. The density in the middle of the visualization could indicate that there is a significant number of images that represent similar content or themes. This means that the ResNet18 embeddings have successfully placed similar images close to each other, while different images are located further away. The clear separation between the point clouds emphasizes the ability of the ResNet18 model to divide images into different conceptual categories.
